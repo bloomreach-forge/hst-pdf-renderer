@@ -29,6 +29,11 @@
     <geronimo-jta_1.1_spec.version>1.1</geronimo-jta_1.1_spec.version>
     <servlet-api.version>2.4</servlet-api.version>
 
+    <xhtmlrenderer-core-renderer.version>R8</xhtmlrenderer-core-renderer.version>
+    <nekohtml.version>1.9.16</nekohtml.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <commons-io.version>1.4</commons-io.version>
+
     <lib.junit.version>4.8.2</lib.junit.version>
     <lib.easymock.version>3.0</lib.easymock.version>
     <lib.slf4j.version>1.6.1</lib.slf4j.version>
@@ -135,6 +140,30 @@
         <scope>provided</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.xhtmlrenderer</groupId>
+        <artifactId>core-renderer</artifactId>
+        <version>${xhtmlrenderer-core-renderer.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sourceforge.nekohtml</groupId>
+        <artifactId>nekohtml</artifactId>
+        <version>${nekohtml.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+
       <!-- TEST DEPENDENCIES -->
 
       <dependency>
@@ -175,6 +204,80 @@
     </dependencies>
 
   </dependencyManagement>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xhtmlrenderer</groupId>
+      <artifactId>core-renderer</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sourceforge.nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <!-- TEST DEPENDENCIES -->
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
 
   <reporting>
     <plugins>
