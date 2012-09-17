@@ -110,10 +110,8 @@ public class HtmlPDFRenderer {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = builder.parse(new InputSource(xhtmlReader));
 
-            removeCssLinkElementsFromXhtmlDocument(document);
-
             if (cssURI != null) {
-                addCssLinkElementToXhtmlDocument(document, cssURI);
+                insertCssLinkElementToXhtmlDocument(document, cssURI);
             }
 
             if (userAgentCallback != null) {
@@ -165,44 +163,7 @@ public class HtmlPDFRenderer {
         return new InputStreamReader(new ByteArrayInputStream(bytes), "UTF-8");
     }
 
-    private static void removeCssLinkElementsFromXhtmlDocument(Document document) {
-        Element html = document.getDocumentElement();
-        NodeList childNodeList = html.getChildNodes();
-        Element headElem = null;
-
-        if (childNodeList != null) {
-            int length = childNodeList.getLength();
-
-            for (int i = 0; i < length; i++) {
-                Node childNode = childNodeList.item(i);
-
-                if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                    if (StringUtils.equalsIgnoreCase("head", childNode.getNodeName())) {
-                        headElem = (Element) childNode;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (headElem != null) {
-            childNodeList = headElem.getChildNodes();
-
-            if (childNodeList != null) {
-                int length = childNodeList.getLength();
-
-                for (int i = length - 1; i >= 0; i--) {
-                    Node childNode = childNodeList.item(i);
-
-                    if (childNode.getNodeType() == Node.ELEMENT_NODE && StringUtils.equalsIgnoreCase("link", childNode.getNodeName())) {
-                        headElem.removeChild(childNode);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void addCssLinkElementToXhtmlDocument(Document document, URI cssURI) {
+    private static void insertCssLinkElementToXhtmlDocument(Document document, URI cssURI) {
         Element html = document.getDocumentElement();
         NodeList childNodeList = html.getChildNodes();
         Element firstChildElem = null;
