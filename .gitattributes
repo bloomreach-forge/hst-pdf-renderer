@@ -1,4 +1,7 @@
 * text=auto !eol
 /pom.xml -text
-src/main/java/org/onehippo/forge/hst/pdf/renderer/HtmlParserUtils.java -text
-src/test/java/org/onehippo/forge/hst/pdf/renderer/TestHtmlParserUtils.java -text
+src/main/java/org/onehippo/forge/hst/pdf/renderer/HtmlPDFRenderer.java -text
+src/test/java/org/onehippo/forge/hst/pdf/renderer/TestHtmlPDFRenderer.java -text
+src/test/resources/log4j.xml -text
+src/test/resources/org/onehippo/forge/hst/pdf/renderer/alice.css -text
+src/test/resources/org/onehippo/forge/hst/pdf/renderer/solar-power-the-sky-is-the-limit.html -text
