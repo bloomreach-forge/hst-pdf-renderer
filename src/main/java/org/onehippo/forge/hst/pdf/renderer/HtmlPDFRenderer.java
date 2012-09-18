@@ -65,6 +65,7 @@ public class HtmlPDFRenderer {
     private int bufferSize = 4096;
     private UserAgentCallback userAgentCallback;
     private String [] fontPaths;
+    private boolean useFullyQualifiedLinks = true;
 
     public HtmlPDFRenderer() {
     }
@@ -109,12 +110,20 @@ public class HtmlPDFRenderer {
         this.fontPaths = fontPaths;
     }
 
+    public boolean isUseFullyQualifiedLinks() {
+        return useFullyQualifiedLinks;
+    }
+
+    public void setUseFullyQualifiedLinks(boolean useFullyQualifiedLinks) {
+        this.useFullyQualifiedLinks = useFullyQualifiedLinks;
+    }
+
     public void renderHtmlToPDF(InputStream htmlInput, String inputHtmlEncoding, boolean convertToXHTML, OutputStream pdfOutput, String baseURL) throws IOException {
         InputStreamReader htmlReader = new InputStreamReader(htmlInput, inputHtmlEncoding);
         renderHtmlToPDF(htmlReader, convertToXHTML, pdfOutput, baseURL);
     }
 
-    public void renderHtmlToPDF(Reader htmlInput, boolean convertToXHTML, OutputStream pdfOutput, String baseURL) throws IOException {
+    public void renderHtmlToPDF(Reader htmlInput, boolean convertToXHTML, OutputStream pdfOutput, String documentURL) throws IOException {
         Reader xhtmlReader = null;
 
         try {
@@ -145,11 +154,16 @@ public class HtmlPDFRenderer {
                 appendCssLinkElementToXhtmlDocument(document, cssURIs);
             }
 
+            if (useFullyQualifiedLinks && !StringUtils.isEmpty(documentURL)) {
+                replaceLinksByFullyQualifiedURLs(document, documentURL, "a");
+                replaceLinksByFullyQualifiedURLs(document, documentURL, "A");
+            }
+
             if (userAgentCallback != null) {
                 renderer.getSharedContext().setUserAgentCallback(userAgentCallback);
             }
 
-            renderer.setDocument(document, baseURL);
+            renderer.setDocument(document, documentURL);
             renderer.layout();
             renderer.createPDF(pdfOutput);
         } catch (ParserConfigurationException e) {
@@ -258,6 +272,61 @@ public class HtmlPDFRenderer {
             linkElem.setAttribute("href", cssURI.toString());
             linkElem.setAttribute("media", "print");
             headElem.appendChild(linkElem);
+        }
+    }
+
+    private static String getBaseServerURL(String documentURL) {
+        URI documentURI = URI.create(documentURL);
+        StringBuilder sb = new StringBuilder(40);
+        String scheme = documentURI.getScheme();
+        int port = documentURI.getPort();
+        sb.append(scheme).append("://");
+        sb.append(documentURI.getHost());
+
+        if (("http".equals(scheme) && port != 80) || ("https".equals(scheme) && port != 443)) {
+            sb.append(':').append(port);
+        }
+
+        return sb.toString();
+    }
+
+    private static void replaceLinksByFullyQualifiedURLs(Document document, String documentURL, String linkTagName) {
+        String baseServerURL = getBaseServerURL(documentURL);
+
+        NodeList linkList = document.getElementsByTagName(linkTagName);
+
+        if (linkList != null) {
+            int length = linkList.getLength();
+
+            for (int i = 0; i < length; i++) {
+                Node linkNode = linkList.item(i);
+
+                if (linkNode.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+
+                Element linkElem = (Element) linkNode;
+                String href = StringUtils.trim(linkElem.getAttribute("href"));
+
+                if (StringUtils.isEmpty(href)) {
+                    href = StringUtils.trim(linkElem.getAttribute("HREF"));
+                }
+
+                if (StringUtils.isEmpty(href)) {
+                    continue;
+                }
+
+                if (StringUtils.startsWith(href, "http:") || StringUtils.startsWith(href, "https:")) {
+                    continue;
+                }
+
+                if (StringUtils.startsWith(href, "/")) {
+                    linkElem.setAttribute("href", baseServerURL + href);
+                } else {
+                    String basePath = StringUtils.substringBeforeLast(documentURL, "/");
+                    linkElem.setAttribute("href", basePath + "/" + href);
+                }
+            }
         }
     }
 }
