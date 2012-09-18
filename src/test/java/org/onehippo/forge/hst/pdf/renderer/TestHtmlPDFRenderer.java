@@ -52,7 +52,9 @@ public class TestHtmlPDFRenderer {
         try {
             htmlInput = getClass().getResourceAsStream(htmlFileName);
             pdfOutput = new FileOutputStream(new File(new File("target"), htmlFileName + ".pdf"));
-            pdfRenderer.renderHtmlToPDF(htmlInput, "UTF-8", true, pdfOutput, "http://localhost:8080/site/pdf/news/2011/solar-power-the-sky-is-the-limit.html");
+            String documentURL = "http://localhost:8080/site/pdf/news/2011/solar-power-the-sky-is-the-limit.html";
+            String externalLinkBaseURL = "http://localhost:8080";
+            pdfRenderer.renderHtmlToPDF(htmlInput, "UTF-8", true, pdfOutput, documentURL, externalLinkBaseURL);
         } finally {
             IOUtils.closeQuietly(pdfOutput);
             IOUtils.closeQuietly(htmlInput);

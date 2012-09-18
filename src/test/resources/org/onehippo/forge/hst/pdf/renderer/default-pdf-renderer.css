@@ -5,8 +5,20 @@
   -fs-flow-bottom: "footer";
   -fs-flow-left: "left";
   -fs-flow-right: "right";
-  border: thin solid black;
+  border: thin solid gray;
   padding: 1em;
+  @top-left {
+    content: "Generated PDF Pages";
+  }
+  @top-right {
+    content: "HST PDF Renderer";
+  }
+  @bottom-left {
+    content: "www.onehippo.org";
+  }
+  @bottom-right {
+    content: "Page " counter(page) "/" counter(pages);
+  }
 }
 
 #header {
@@ -27,4 +39,24 @@
 
 #pagecount:before {
   content: counter(pages);  
+}
+
+#pagebreakbefore {
+  page-break-before: always;
+}
+
+#pagebreakafter {
+  page-break-after: always;
+}
+
+#top {
+  display: none;
+}
+
+#leftmenu {
+  display: none;
+}
+
+#right {
+  display: none;
 }

@@ -42,6 +42,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.forge.hst.pdf.renderer.HtmlPDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,7 +175,7 @@ public class HtmlPDFRenderingFilter implements Filter {
             ((HttpServletResponse) response).addHeader("Content-Disposition", headerValue.toString());
 
             pdfOutputStream = response.getOutputStream();
-            pdfRenderer.renderHtmlToPDF(htmlReader, true, pdfOutputStream, getDocumentURL((HttpServletRequest) request));
+            pdfRenderer.renderHtmlToPDF(htmlReader, true, pdfOutputStream, getDocumentURL((HttpServletRequest) request), getExternalLinkBaseURL((HttpServletRequest) request));
         } catch (Exception e) {
             
         } finally {
@@ -197,7 +200,7 @@ public class HtmlPDFRenderingFilter implements Filter {
         }
     }
 
-    private String getDocumentURL(HttpServletRequest request) {
+    private String getDocumentBaseURL(HttpServletRequest request) {
         StringBuilder sb = new StringBuilder(40);
 
         String scheme = request.getScheme();
@@ -218,8 +221,29 @@ public class HtmlPDFRenderingFilter implements Filter {
             }
         }
 
-        sb.append(request.getRequestURI());
-
         return sb.toString();
+    }
+
+    private String getDocumentURL(HttpServletRequest request) {
+        StringBuilder sb = new StringBuilder(40);
+        sb.append(getDocumentBaseURL(request));
+        sb.append(request.getRequestURI());
+        return sb.toString();
+    }
+
+    private String getExternalLinkBaseURL(HttpServletRequest request) {
+        HstRequestContext requestContext = HstRequestUtils.getHstRequestContext(request);
+
+        if (requestContext == null) {
+            return getDocumentBaseURL(request);
+        }
+
+        VirtualHost virtualHost = requestContext.getVirtualHost();
+
+        if (virtualHost == null) {
+            return getDocumentBaseURL(request);
+        }
+
+        return virtualHost.getBaseURL(request);
     }
 }

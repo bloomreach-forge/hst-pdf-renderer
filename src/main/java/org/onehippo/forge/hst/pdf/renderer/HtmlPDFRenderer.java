@@ -118,12 +118,12 @@ public class HtmlPDFRenderer {
         this.useFullyQualifiedLinks = useFullyQualifiedLinks;
     }
 
-    public void renderHtmlToPDF(InputStream htmlInput, String inputHtmlEncoding, boolean convertToXHTML, OutputStream pdfOutput, String baseURL) throws IOException {
+    public void renderHtmlToPDF(InputStream htmlInput, String inputHtmlEncoding, boolean convertToXHTML, OutputStream pdfOutput, String documentURL, String externalLinkBaseURL) throws IOException {
         InputStreamReader htmlReader = new InputStreamReader(htmlInput, inputHtmlEncoding);
-        renderHtmlToPDF(htmlReader, convertToXHTML, pdfOutput, baseURL);
+        renderHtmlToPDF(htmlReader, convertToXHTML, pdfOutput, documentURL, externalLinkBaseURL);
     }
 
-    public void renderHtmlToPDF(Reader htmlInput, boolean convertToXHTML, OutputStream pdfOutput, String documentURL) throws IOException {
+    public void renderHtmlToPDF(Reader htmlInput, boolean convertToXHTML, OutputStream pdfOutput, String documentURL, String externalLinkBaseURL) throws IOException {
         Reader xhtmlReader = null;
 
         try {
@@ -154,9 +154,9 @@ public class HtmlPDFRenderer {
                 appendCssLinkElementToXhtmlDocument(document, cssURIs);
             }
 
-            if (useFullyQualifiedLinks && !StringUtils.isEmpty(documentURL)) {
-                replaceLinksByFullyQualifiedURLs(document, documentURL, "a");
-                replaceLinksByFullyQualifiedURLs(document, documentURL, "A");
+            if (useFullyQualifiedLinks && !StringUtils.isEmpty(externalLinkBaseURL)) {
+                replaceLinksByFullyQualifiedURLs(document, "a", externalLinkBaseURL, documentURL);
+                replaceLinksByFullyQualifiedURLs(document, "A", externalLinkBaseURL, documentURL);
             }
 
             if (userAgentCallback != null) {
@@ -275,24 +275,8 @@ public class HtmlPDFRenderer {
         }
     }
 
-    private static String getBaseServerURL(String documentURL) {
-        URI documentURI = URI.create(documentURL);
-        StringBuilder sb = new StringBuilder(40);
-        String scheme = documentURI.getScheme();
-        int port = documentURI.getPort();
-        sb.append(scheme).append("://");
-        sb.append(documentURI.getHost());
-
-        if (("http".equals(scheme) && port != 80) || ("https".equals(scheme) && port != 443)) {
-            sb.append(':').append(port);
-        }
-
-        return sb.toString();
-    }
-
-    private static void replaceLinksByFullyQualifiedURLs(Document document, String documentURL, String linkTagName) {
-        String baseServerURL = getBaseServerURL(documentURL);
-
+    private static void replaceLinksByFullyQualifiedURLs(Document document, String linkTagName, String externalLinkBaseURL, String documentURL) {
+        URI documentURI = null;
         NodeList linkList = document.getElementsByTagName(linkTagName);
 
         if (linkList != null) {
@@ -321,9 +305,14 @@ public class HtmlPDFRenderer {
                 }
 
                 if (StringUtils.startsWith(href, "/")) {
-                    linkElem.setAttribute("href", baseServerURL + href);
+                    linkElem.setAttribute("href", externalLinkBaseURL + href);
                 } else {
-                    String basePath = StringUtils.substringBeforeLast(documentURL, "/");
+                    if (documentURI == null) {
+                        documentURI = URI.create(documentURL);
+                    }
+
+                    String documentURIPath = documentURI.getPath();
+                    String basePath = externalLinkBaseURL + StringUtils.substringBeforeLast(documentURIPath, "/");
                     linkElem.setAttribute("href", basePath + "/" + href);
                 }
             }
