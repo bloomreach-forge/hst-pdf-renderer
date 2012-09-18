@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2012 Hippo B.V.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>HST PDF Renderer</title>
+  </properties>
+  <body>
+
+    <section name="Introduction">
+      <p>
+        <strong>HST PDF Renderer</strong> basically transforms HTML output into PDF output.
+        It leverages <a href="http://code.google.com/p/flying-saucer/" target="_blank">Flying Saucer</a> library to generate PDF output.
+        Because Flying Saucer requires valid XHTML input for PDF generation,
+        <strong>HST PDF Renderer</strong> supports transformation from HTML markups to valid XHTML markups 
+        by leveraging <a href="http://jtidy.sourceforge.net" target="_blank">JTidy</a> library.
+        HST PDF Renderer also supports a servlet filter which transforms normal HTML output to PDF output at runtime.
+      </p>
+
+      <subsection name="License">
+        <p>
+          <strong>HST PDF Renderer</strong> is provided under the terms of the GNU General Public License,
+          as Flying Saucer is. See the following for detail.
+        </p>
+        <div class="brush: plain; gutter: false; toolbar: false;">
+        <source><![CDATA[
+ HST PDF Renderer is free software: you can redistribute it and/or modify it 
+ under the terms of the GNU General Public License as published by the Free 
+ Software Foundation, either version 3 of the License, or (at your option) 
+ any later version.
+ 
+ HST PDF Renderer is distributed in the hope that it will be useful, but 
+ WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ HST PDF Renderer. If not, see http://www.gnu.org/licenses/.
+        ]]></source>
+        </div>
+      </subsection>
+
+    </section>
+
+    <section name="Project Status">
+      <p>
+        For the latest version, see the <a href="release-notes.html">Release notes</a>.
+      </p>
+      <p>
+        See <a href="https://forge.onehippo.org/gf/project/hstpdfrenderer/" target="_blank">the forge project page</a>
+        for more info about the project itself. 
+      </p>
+    </section>
+
+    <section name="Architecture">
+
+      <p>
+        <strong>HST PDF Renderer</strong> contains a servlet filter named 'HtmlPDFRenderingFilter' 
+        which transforms HTML output from the SITE application into PDF output.
+        In the following sections, you will see a typical deployment view in a web application and a runtime view
+        which shows how its components are interacting at runtime.
+      </p>
+
+      <subsection name="Deployment View">
+        <img src="images/deployview.png" alt="Deployment View"/>
+        <ul>
+          <li>Basically <strong>HST PDF Renderer</strong> is deployed inside a web site application (which is deployed onto a servlet container).</li>
+          <li>
+            You should configure the servlet filter ("HstPDFRenderingFilter") of <strong>HST PDF Renderer</strong> and its servlet filter mapping
+            in order to activate the automatic PDF generation from the normal html output at runtime.
+          </li>
+          <li>
+            You should configure CSS file(s) for HstPDFRenderingFilter.
+            The CSS file(s) are used when generating PDF output, so you can customize the CSS files for your tastes.
+          </li>
+        </ul>
+      </subsection>
+
+      <subsection name="Runtime View">
+        <img src="images/cncview.png" alt="Runtime View"/>
+        <ul>
+          <li>
+            The servlet filter, <strong>HstPDFRenderingFilter</strong>, should be located before the other rendering filters such as <strong>HstFilter</strong>.
+          </li>
+          <li>
+            <strong>HstPDFRenderingFilter</strong> invokes the filterChain to invoke the remaining servlet filtr chain
+            and captures all the HTML response output.
+          </li>
+          <li>
+            Then <strong>HstPDFRenderingFilter</strong> invokes <strong>HtmlPDFRenderer</strong>, which contains all the core logic
+            for XHTML transformation and PDF generation.
+            (Note: <strong>HtmlPDFRenderer</strong> can be used separately, even in a stand-alone application.)
+          </li>
+          <li>
+            Then <strong>HtmlPDFRenderer</strong> cleans up the captured HTML output and transforms it to valid XHTML output,
+            by leveraging <strong>JTidy</strong> library (org.w3c.tidy.*).
+          </li>
+          <li>
+            Finally <strong>HtmlPDFRenderer</strong> invokes <strong>Flying Saucer</strong> library (org.xhtmlrenderer.*)
+            in order to generate PDF output. The PDF output is sent to the user agent through <strong>HstPDFRenderingFilter</strong> in the end.
+          </li>
+        </ul>
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2012 Hippo B.V.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Installation</title>
+  </properties>
+  <body>
+    <section name="HST PDF Renderer">
+      <subsection name="Dependencies">
+        <p>Add the following dependency to the SITE Application module POM:</p>
+        <div class="brush: xml">
+        <source><![CDATA[
+    <!-- SNIP -->
+
+    <repository>
+      <id>hstpdfrenderer-maven-repo</id>
+      <name>HST PDF Renderer Maven 2 Repository</name>
+      <url>http://forge.onehippo.org/svn/hstpdfrenderer/maven2/</url>
+    </repository>
+
+    <!-- SNIP -->
+
+    <dependency>
+      <groupId>org.onehippo.forge.hstpdfrenderer</groupId>
+      <artifactId>hstpdfrenderer</artifactId>
+      <version>${forge.hstpdfrenderer.version}</version>
+    </dependency>
+
+    <!-- SNIP -->
+        ]]></source>
+        </div>
+      </subsection>
+
+      <subsection name="Servlet Filter Configuration">
+        <p>Add the servlet filter configuration in the web.xml of your web application like the following:</p>
+        <p>
+          <em>
+            Note: The mapping of the servlet filter, 'HtmlPDFRenderingFilter', must be located before the other
+                  rendering servlet filters such as 'HstFilter' because 'HtmlPDFRenderingFilter' should capture the
+                  rendered HTML output to transform to PDF output.
+          </em>
+        </p>
+        <p>
+          In the following example configuration, the HtmlPDFRenderingFilter servlet filter is configured to handle
+          all the request paths starting with '/pdf/*'.
+          This example assumes you will configure a HST mount named 'pdf' under the HST root mount for convenience.
+        </p>
+        <div class="brush: xml">
+        <source><![CDATA[
+  <!-- SNIP -->
+
+  <filter>
+    <filter-name>HtmlPDFRenderingFilter</filter-name>
+    <filter-class>org.onehippo.forge.hst.pdf.renderer.servlet.HtmlPDFRenderingFilter</filter-class>
+    <init-param>
+      <param-name>css.uris</param-name>
+      <param-value>/WEB-INF/default-pdf-renderer.css</param-value>
+    </init-param>
+  </filter>
+
+  <!-- SNIP -->
+
+  <filter-mapping>
+    <filter-name>HtmlPDFRenderingFilter</filter-name>
+    <url-pattern>/pdf/*</url-pattern>
+  </filter-mapping>
+
+  <!-- SNIP -->
+        ]]></source>
+        </div>
+        
+        <p>
+          Here is the detail for all the configurable init parameters of HtmlPDFRenderingFilter:
+        </p>
+        <table>
+          <tr>
+            <th>Init Parameter Name</th>
+            <th>Description</th>
+            <th>Default Value</th>
+          </tr>
+          <tr>
+            <td>css.uris</td>
+            <td>
+              CSS file resource paths used when generating PDF output.
+              You can specify multiple CSS file resources by separating comma, semicolon, tab or line break.
+              Each CSS file resource can be either context relative path (e.g., /WEB-INF/default-pdf-renderer.css)
+              or file: URI or relative path from the current working directory.
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td>font.paths</td>
+            <td>
+              Font file resource paths used when embedding fonts into PDF output.
+              You can specify multiple CSS file resources by separating comma, semicolon, tab or line break.
+              Each CSS file resource can be either context relative path (e.g., /WEB-INF/fonts/arial.ttf)
+              or file: URI or relative path from the current working directory.
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td>buffer.size</td>
+            <td>
+              Byte buffer size used when cleaning up HTML output and transforming HTML output to XHTML output internally.
+            </td>
+            <td>
+              4096
+            </td>
+          </tr>
+          <tr>
+            <td>user.agent.callback.class</td>
+            <td>
+              The name of a custom class which implements org.xhtmlrenderer.extend.UserAgentCallback.
+              If you want to customize the internal callback mechanism for Flying Saucer for some reason
+              (e.g., custom image loading), then you can provide the class name of your custom class.
+            </td>
+            <td>
+            </td>
+          </tr>
+        </table>
+      </subsection>
+
+      <subsection name="Example: Add 'pdf' Mount in HST Configuration">
+        <p>
+          As mentioned above, it is very convenient if you configure a sub mount for automatic PDF generation from the normal HTML rendering
+          because the servlet filter configuration and link generations become much easier.
+        </p>
+        <p>
+          So, for example, 'pdf' sub mount can be configured under 'hst:root' mount:
+        </p>
+        <div class="brush: xml">
+        <source><![CDATA[
+      <!-- SNIP -->
+
+      <sv:node sv:name="hst:root">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:mount</sv:value>
+        </sv:property>
+
+        <!-- SNIP -->
+
+        <!-- The following 'pdf' mount configuration is added under 'hst:root' mount configuration. -->
+        <sv:node sv:name="pdf">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:alias" sv:type="String">
+            <sv:value>pdf</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+
+      <!-- SNIP -->
+        ]]></source>
+        </div>
+        <p>
+          You can also consider configuring sitemap items for automatic PDF generation URLs, but in that case,
+          you will have to configure many more URL patterns for HtmlPDFRenderingFilter and
+          it will more difficult or tedious to generate PDF URL links.
+        </p>
+      </subsection>
+
+      <subsection name="Example: Create a 'pdf' link in your page(s)">
+        <p>
+          If you configured a pdf rendering mount, then it is very easy to generate PDF rendering links in your templates.
+          See the following example:
+        </p>
+        <div class="brush: xml">
+        <source><![CDATA[
+    <c:if test="${not empty document}">
+      <div id="pdflink">
+        <a href='<hst:link mount="pdf" hippobean="${document}"/>'>
+          <img src="<hst:link path="/images/pdf.gif"/>" border="0" />
+        </a>
+      </div>
+    </c:if>
+        ]]></source>
+        </div>
+      </subsection>
+
+      <subsection name="Example: Stylesheet(s) for PDF Rendering">
+        <p>
+          HtmlPDFRenderingFilter uses the configured stylesheet resources when rendering PDF output.
+          Here's an example CSS file:
+        </p>
+        <div class="brush: plain">
+        <source><![CDATA[
+@page { 
+  size: letter;
+  margin: 0.8in; 
+  -fs-flow-top: "header";
+  -fs-flow-bottom: "footer";
+  -fs-flow-left: "left";
+  -fs-flow-right: "right";
+  border: thin solid gray;
+  padding: 1em;
+  @top-left {
+    content: "Generated PDF Pages";
+  }
+  @top-right {
+    content: "HST PDF Renderer";
+  }
+  @bottom-left {
+    content: "www.onehippo.org";
+  }
+  @bottom-right {
+    content: "Page " counter(page) "/" counter(pages);
+  }
+}
+
+#header {
+  font: bold serif;
+  position: absolute; top: 0; left: 0; 
+  -fs-move-to-flow: "header";
+}
+
+#footer {
+  font-size: 90%; font-style: italic; 
+  position: absolute; top: 0; left: 0;
+  -fs-move-to-flow: "footer";
+}
+
+#pagenumber:before {
+  content: counter(page); 
+}
+
+#pagecount:before {
+  content: counter(pages);  
+}
+
+#pagebreakbefore {
+  page-break-before: always;
+}
+
+#pagebreakafter {
+  page-break-after: always;
+}
+
+#hd {
+  display: none;
+}
+
+#leftmenu {
+  display: none;
+}
+
+#right {
+  display: none;
+}
+        ]]></source>
+        </div>
+        <p>
+          See the <a href="http://flyingsaucerproject.github.com/flyingsaucer/r8/guide/users-guide-R8.html" target="_blank">The Flying Saucer User's Guide</a>
+          for detail.
+        </p>
+      </subsection>
+
+    </section>
+    <section name="Demo">
+      <p>Check out and build the demo at:
+        <a href="https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo">
+          https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo
+        </a>
+      </p>
+      <p>For example, you can run the demo TRUNK as follows:</p>
+      <div class="brush: bash">
+      <source><![CDATA[
+$ svn checkout https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo/trunk hstpdfrenderer-demo-TRUNK
+$ cd hstpdfrenderer-demo-TRUNK
+$ mvn clean install
+$ mvn -P cargo.run
+      ]]></source>
+      </div>
+      <p>
+        Try to click PDF icon button on each detail page in the website, http://localhost:8080/site/.
+      </p>
+    </section>
+  </body>
+</document>
