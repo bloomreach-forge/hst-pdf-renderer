@@ -198,7 +198,7 @@
       <subsection name="Example: Stylesheet(s) for PDF Rendering">
         <p>
           HtmlPDFRenderingFilter uses the configured stylesheet resources when rendering PDF output.
-          Here's an example CSS file:
+          Here's an example CSS file (You can download this example <a href="https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo/trunk/site/src/main/webapp/WEB-INF/default-pdf-renderer.css">here</a>.):
         </p>
         <div class="brush: plain">
         <source><![CDATA[
