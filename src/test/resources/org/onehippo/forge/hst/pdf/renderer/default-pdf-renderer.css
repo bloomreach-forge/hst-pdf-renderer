@@ -1,6 +1,6 @@
 @page { 
-  size: 4.18in 6.88in;
-  margin: 0.25in; 
+  size: letter;
+  margin: 0.8in; 
   -fs-flow-top: "header";
   -fs-flow-bottom: "footer";
   -fs-flow-left: "left";

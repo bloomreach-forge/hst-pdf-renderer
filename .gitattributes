@@ -5,5 +5,5 @@ src/main/java/org/onehippo/forge/hst/pdf/renderer/servlet/ContentCapturingHttpSe
 src/main/java/org/onehippo/forge/hst/pdf/renderer/servlet/HtmlPDFRenderingFilter.java -text
 src/test/java/org/onehippo/forge/hst/pdf/renderer/TestHtmlPDFRenderer.java -text
 src/test/resources/log4j.xml -text
-src/test/resources/org/onehippo/forge/hst/pdf/renderer/alice.css -text
+src/test/resources/org/onehippo/forge/hst/pdf/renderer/default-pdf-renderer.css -text
 src/test/resources/org/onehippo/forge/hst/pdf/renderer/solar-power-the-sky-is-the-limit.html -text

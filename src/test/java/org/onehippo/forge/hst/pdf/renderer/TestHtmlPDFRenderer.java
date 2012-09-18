@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -38,8 +39,8 @@ public class TestHtmlPDFRenderer {
     @Before
     public void setUp() throws Exception {
         pdfRenderer = new HtmlPDFRenderer();
-        File cssFile = FileUtils.toFile(getClass().getResource("alice.css"));
-        pdfRenderer.setCssURI(cssFile.toURI());
+        File cssFile = FileUtils.toFile(getClass().getResource("default-pdf-renderer.css"));
+        pdfRenderer.setCssURIs(new URI [] { cssFile.toURI() });
     }
 
     @Test
@@ -51,7 +52,7 @@ public class TestHtmlPDFRenderer {
         try {
             htmlInput = getClass().getResourceAsStream(htmlFileName);
             pdfOutput = new FileOutputStream(new File(new File("target"), htmlFileName + ".pdf"));
-            pdfRenderer.renderHtmlToPDF(htmlInput, "UTF-8", true, pdfOutput, "http://localhost:8080/");
+            pdfRenderer.renderHtmlToPDF(htmlInput, "UTF-8", true, pdfOutput, "http://localhost:8080/site/pdf/news/2011/solar-power-the-sky-is-the-limit.html");
         } finally {
             IOUtils.closeQuietly(pdfOutput);
             IOUtils.closeQuietly(htmlInput);

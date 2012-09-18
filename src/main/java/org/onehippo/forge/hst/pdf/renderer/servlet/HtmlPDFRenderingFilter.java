@@ -27,6 +27,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -50,9 +52,10 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
  */
 public class HtmlPDFRenderingFilter implements Filter {
 
-    public static final String CSS_URI_PARAM = "css.uri";
+    public static final String CSS_URI_PARAM = "css.uris";
     public static final String BUFFER_SIZE_PARAM = "buffer.size";
-    public static final String USER_AGENT_CALLBACK_CLASS = "user.agent.callback.class";
+    public static final String USER_AGENT_CALLBACK_CLASS_PARAM = "user.agent.callback.class";
+    public static final String FONT_PATHS_PARAM = "font.paths";
 
     private static Logger log = LoggerFactory.getLogger(HtmlPDFRenderingFilter.class);
 
@@ -65,22 +68,31 @@ public class HtmlPDFRenderingFilter implements Filter {
         String param = StringUtils.trim(filterConfig.getInitParameter(CSS_URI_PARAM));
 
         if (!StringUtils.isEmpty(param)) {
-            if (StringUtils.startsWith(param, "file:") || StringUtils.startsWith(param, "http:") || StringUtils.startsWith(param, "https:") || StringUtils.startsWith(param, "ftp:") || StringUtils.startsWith(param, "sftp:")) {
-                pdfRenderer.setCssURI(URI.create(param));
-            } else {
-                File cssFile = null;
+            String [] cssURIParams = StringUtils.split(param, ";, \t\r\n");
+            List<URI> cssURIList = new ArrayList<URI>();
 
-                if (StringUtils.startsWith(param, "/")) {
-                    cssFile = new File(filterConfig.getServletContext().getRealPath(param));
+            for (String cssURIParam : cssURIParams) {
+                if (StringUtils.startsWith(cssURIParam, "file:") || StringUtils.startsWith(cssURIParam, "http:") || StringUtils.startsWith(cssURIParam, "https:") || StringUtils.startsWith(cssURIParam, "ftp:") || StringUtils.startsWith(cssURIParam, "sftp:")) {
+                    cssURIList.add(URI.create(param));
                 } else {
-                    cssFile = new File(param);
-                }
+                    File cssFile = null;
 
-                if (!cssFile.isFile()) {
-                    log.error("Cannot find the css file: {}", cssFile);
-                } else {
-                    pdfRenderer.setCssURI(cssFile.toURI());
+                    if (StringUtils.startsWith(cssURIParam, "/")) {
+                        cssFile = new File(filterConfig.getServletContext().getRealPath(cssURIParam));
+                    } else {
+                        cssFile = new File(cssURIParam);
+                    }
+
+                    if (!cssFile.isFile()) {
+                        log.error("Cannot find the css file: {}", cssFile);
+                    } else {
+                        cssURIList.add(cssFile.toURI());
+                    }
                 }
+            }
+
+            if (!cssURIList.isEmpty()) {
+                pdfRenderer.setCssURIs(cssURIList.toArray(new URI[cssURIList.size()]));
             }
         }
 
@@ -90,7 +102,7 @@ public class HtmlPDFRenderingFilter implements Filter {
             pdfRenderer.setBufferSize(Math.max(512, NumberUtils.toInt(param, 4096)));
         }
 
-        param = StringUtils.trim(filterConfig.getInitParameter(USER_AGENT_CALLBACK_CLASS));
+        param = StringUtils.trim(filterConfig.getInitParameter(USER_AGENT_CALLBACK_CLASS_PARAM));
 
         if (!StringUtils.isEmpty(param)) {
             try {
@@ -105,6 +117,14 @@ public class HtmlPDFRenderingFilter implements Filter {
                 log.error("Failed to set userAgentClassCallback object", e);
             }
         }
+
+        param = StringUtils.trim(filterConfig.getInitParameter(FONT_PATHS_PARAM));
+
+        if (!StringUtils.isEmpty(param)) {
+            String [] fontPaths = StringUtils.split(param, ";, \t\r\n");
+            pdfRenderer.setFontPaths(fontPaths);
+        }
+
     }
 
     @Override
@@ -145,8 +165,14 @@ public class HtmlPDFRenderingFilter implements Filter {
             capturingResponse.close();
             capturingResponse = null;
 
+            response.setContentType("application/pdf");
+
+            StringBuilder headerValue = new StringBuilder("attachment");
+            headerValue.append("; filename=\"").append(getDocumentFilename((HttpServletRequest) request)).append("\"");
+            ((HttpServletResponse) response).addHeader("Content-Disposition", headerValue.toString());
+
             pdfOutputStream = response.getOutputStream();
-            pdfRenderer.renderHtmlToPDF(htmlReader, true, pdfOutputStream, getBaseURL((HttpServletRequest) request));
+            pdfRenderer.renderHtmlToPDF(htmlReader, true, pdfOutputStream, getDocumentURL((HttpServletRequest) request));
         } catch (Exception e) {
             
         } finally {
@@ -160,7 +186,18 @@ public class HtmlPDFRenderingFilter implements Filter {
         }
     }
 
-    private String getBaseURL(HttpServletRequest request) {
+    private String getDocumentFilename(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        String fileName = StringUtils.trim(StringUtils.substringAfterLast(requestURI, "/"));
+
+        if (StringUtils.isEmpty(fileName)) {
+            return "download.pdf";
+        } else {
+            return fileName + ".pdf";
+        }
+    }
+
+    private String getDocumentURL(HttpServletRequest request) {
         StringBuilder sb = new StringBuilder(40);
 
         String scheme = request.getScheme();
@@ -169,17 +206,19 @@ public class HtmlPDFRenderingFilter implements Filter {
 
         if ("https".equals(scheme)) {
             if (port == 443) {
-                sb.append(scheme).append("//").append(serverName).append('/');
+                sb.append(scheme).append("://").append(serverName);
             } else {
-                sb.append(scheme).append("//").append(serverName).append(':').append(port).append('/');
+                sb.append(scheme).append("://").append(serverName).append(':').append(port);
             }
         } else {
             if (port == 80) {
-                sb.append(scheme).append("//").append(serverName).append('/');
+                sb.append(scheme).append("://").append(serverName);
             } else {
-                sb.append(scheme).append("//").append(serverName).append(':').append(port).append('/');
+                sb.append(scheme).append("://").append(serverName).append(':').append(port);
             }
         }
+
+        sb.append(request.getRequestURI());
 
         return sb.toString();
     }

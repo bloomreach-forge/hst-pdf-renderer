@@ -42,6 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.extend.UserAgentCallback;
+import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -59,19 +60,29 @@ public class HtmlPDFRenderer {
 
     private static Logger log = LoggerFactory.getLogger(HtmlPDFRenderer.class);
 
-    private URI cssURI;
+    private boolean removeExistingCssLinks = true;
+    private URI [] cssURIs;
     private int bufferSize = 4096;
     private UserAgentCallback userAgentCallback;
+    private String [] fontPaths;
 
     public HtmlPDFRenderer() {
     }
 
-    public URI getCssURI() {
-        return cssURI;
+    public boolean isRemoveExistingCssLinks() {
+        return removeExistingCssLinks;
     }
 
-    public void setCssURI(URI cssURI) {
-        this.cssURI = cssURI;
+    public void setRemoveExistingCssLinks(boolean removeExistingCssLinks) {
+        this.removeExistingCssLinks = removeExistingCssLinks;
+    }
+
+    public URI [] getCssURIs() {
+        return cssURIs;
+    }
+
+    public void setCssURIs(URI [] cssURIs) {
+        this.cssURIs = cssURIs;
     }
 
     public int getBufferSize() {
@@ -88,6 +99,14 @@ public class HtmlPDFRenderer {
 
     public void setUserAgentCallback(UserAgentCallback userAgentCallback) {
         this.userAgentCallback = userAgentCallback;
+    }
+
+    public String [] getFontPaths() {
+        return fontPaths;
+    }
+
+    public void setFontPaths(String [] fontPaths) {
+        this.fontPaths = fontPaths;
     }
 
     public void renderHtmlToPDF(InputStream htmlInput, String inputHtmlEncoding, boolean convertToXHTML, OutputStream pdfOutput, String baseURL) throws IOException {
@@ -107,17 +126,29 @@ public class HtmlPDFRenderer {
 
             ITextRenderer renderer = new ITextRenderer();
 
+            if (fontPaths != null && fontPaths.length > 0) {
+                ITextFontResolver fontResolver = renderer.getFontResolver();
+
+                for (String fontPath : fontPaths) {
+                    fontResolver.addFont(fontPath, true);
+                }
+            }
+
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = builder.parse(new InputSource(xhtmlReader));
 
-            if (cssURI != null) {
-                insertCssLinkElementToXhtmlDocument(document, cssURI);
+            if (removeExistingCssLinks) {
+                removeExistingCssLinks(document);
+            }
+
+            if (cssURIs != null && cssURIs.length > 0) {
+                appendCssLinkElementToXhtmlDocument(document, cssURIs);
             }
 
             if (userAgentCallback != null) {
                 renderer.getSharedContext().setUserAgentCallback(userAgentCallback);
             }
-            
+
             renderer.setDocument(document, baseURL);
             renderer.layout();
             renderer.createPDF(pdfOutput);
@@ -163,11 +194,8 @@ public class HtmlPDFRenderer {
         return new InputStreamReader(new ByteArrayInputStream(bytes), "UTF-8");
     }
 
-    private static void insertCssLinkElementToXhtmlDocument(Document document, URI cssURI) {
-        Element html = document.getDocumentElement();
-        NodeList childNodeList = html.getChildNodes();
-        Element firstChildElem = null;
-        Element headElem = null;
+    private static Element getFirstChildElement(Element base, String nodeName) {
+        NodeList childNodeList = base.getChildNodes();
 
         if (childNodeList != null) {
             int length = childNodeList.getLength();
@@ -176,29 +204,60 @@ public class HtmlPDFRenderer {
                 Node childNode = childNodeList.item(i);
 
                 if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                    if (firstChildElem == null) {
-                        firstChildElem = (Element) childNode;
-                    }
-
-                    if (StringUtils.equalsIgnoreCase("head", childNode.getNodeName())) {
-                        headElem = (Element) childNode;
-                        break;
+                    if (nodeName == null) {
+                        return (Element) childNode;
+                    } else if (StringUtils.equalsIgnoreCase(childNode.getNodeName(), nodeName)) {
+                        return (Element) childNode;
                     }
                 }
             }
         }
 
+        return null;
+    }
+
+    private static void removeExistingCssLinks(Document document) {
+        Element headElem = getFirstChildElement(document.getDocumentElement(), "head");
+
         if (headElem == null) {
-            headElem = document.createElement("head");
-            html.insertBefore(headElem, firstChildElem);
+            return;
         }
 
-        Element linkElem = document.createElement("link");
-        linkElem.setAttribute("type", "text/css");
-        linkElem.setAttribute("rel", "stylesheet");
-        linkElem.setAttribute("href", cssURI.toString());
-        linkElem.setAttribute("media", "print");
+        NodeList nodeList = headElem.getChildNodes();
 
-        headElem.appendChild(linkElem);
+        if (nodeList != null) {
+            int length = nodeList.getLength();
+
+            for (int i = length - 1; i >= 0; i--) {
+                Node childNode = nodeList.item(i);
+
+                if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element childElem = (Element) childNode;
+
+                    if (StringUtils.equalsIgnoreCase("link", childElem.getNodeName())) {
+                        if (StringUtils.equalsIgnoreCase("text/css", childElem.getAttribute("type"))) {
+                            headElem.removeChild(childElem);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void appendCssLinkElementToXhtmlDocument(Document document, URI [] cssURIs) {
+        Element headElem = getFirstChildElement(document.getDocumentElement(), "head");
+
+        if (headElem == null) {
+            return;
+        }
+
+        for (URI cssURI : cssURIs) {
+            Element linkElem = document.createElement("link");
+            linkElem.setAttribute("type", "text/css");
+            linkElem.setAttribute("rel", "stylesheet");
+            linkElem.setAttribute("href", cssURI.toString());
+            linkElem.setAttribute("media", "print");
+            headElem.appendChild(linkElem);
+        }
     }
 }
