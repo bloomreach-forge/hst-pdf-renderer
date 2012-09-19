@@ -1,4 +1,5 @@
 * text=auto !eol
+/LICENSE.txt -text
 /pom.xml -text
 src/main/java/org/onehippo/forge/hst/pdf/renderer/HtmlPDFRenderer.java -text
 src/main/java/org/onehippo/forge/hst/pdf/renderer/servlet/ContentCapturingHttpServletResponse.java -text
