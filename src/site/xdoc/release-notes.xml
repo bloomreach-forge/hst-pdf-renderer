@@ -23,6 +23,11 @@
     <title>Release notes</title>
   </properties>
   <body>
+    <section name="0.01.01">
+      <ul>
+        <li>Fixing License Headers</li>
+      </ul>
+    </section>
     <section name="0.01.00">
       <ul>
         <li>Initial Release</li>
