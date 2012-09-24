@@ -282,7 +282,7 @@
           https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo
         </a>
       </p>
-      <p>For example, you can run the demo TRUNK as follows:</p>
+      <p>For example, you can run the demo project as follows:</p>
       <div class="brush: bash">
       <source><![CDATA[
 $ svn checkout https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo/tags/hstpdfrenderer-demo-${forge.hstpdfrenderer.version} hstpdfrenderer-demo
