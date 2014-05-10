@@ -23,20 +23,43 @@
     <title>Release notes</title>
   </properties>
   <body>
-    <section name="0.01.01">
-      <ul>
-        <li>Fixing License Headers</li>
-      </ul>
+    <section name="Compatibility">
+      <table>
+        <tr>
+          <th>Plugin version</th>
+          <th>Hippo CMS Release version</th>
+        </tr>
+        <tr>
+          <td>1.xx.xx</td>
+          <td>7.8.x, 7.9.x</td>
+        </tr>
+        <tr>
+          <td>0.xx.xx</td>
+          <td>7.7.x, 7.8.x</td>
+        </tr>
+      </table>
     </section>
-    <section name="0.01.00">
-      <ul>
-        <li>Initial Release</li>
-        <li>HTML to XHTML transformation by using JTidy</li>
-        <li>Transforming image tags (&lt;img&gt;) to use local absolute URLs in order to embed images in the generated PDF output</li>
-        <li>Transforming link tags (&lt;a&gt;) to use external absolute URLs in order to enable linking in the generated PDF output</li>
-        <li>Transforming XHTML to PDF by using Flying Saucer</li>
-        <li>Site documentation</li>
-      </ul>
+    <section name="Release Notes">
+      <subsection name="1.01.00">
+        <ul>
+          <li>Coming soon</li>
+        </ul>
+      </subsection>
+      <subsection name="0.01.01">
+        <ul>
+          <li>Fixing License Headers</li>
+        </ul>
+      </subsection>
+      <subsection name="0.01.00">
+        <ul>
+          <li>Initial Release</li>
+          <li>HTML to XHTML transformation by using JTidy</li>
+          <li>Transforming image tags (&lt;img&gt;) to use local absolute URLs in order to embed images in the generated PDF output</li>
+          <li>Transforming link tags (&lt;a&gt;) to use external absolute URLs in order to enable linking in the generated PDF output</li>
+          <li>Transforming XHTML to PDF by using Flying Saucer</li>
+          <li>Site documentation</li>
+        </ul>
+      </subsection>
     </section>
   </body>
 </document>

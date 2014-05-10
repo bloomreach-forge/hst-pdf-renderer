@@ -71,9 +71,22 @@
     <filter-name>HtmlPDFRenderingFilter</filter-name>
     <filter-class>org.onehippo.forge.hst.pdf.renderer.servlet.HtmlPDFRenderingFilter</filter-class>
     <init-param>
+      <param-name>tidy.props</param-name>
+      <param-value>/WEB-INF/tidy.properties</param-value>
+    </init-param>
+    <init-param>
       <param-name>css.uris</param-name>
       <param-value>/WEB-INF/default-pdf-renderer.css</param-value>
     </init-param>
+    <!--
+    <init-param>
+      <param-name>font.paths</param-name>
+      <param-value>
+        /home/tester/fonts/courier.ttf
+        /home/tester/fonts/verdana.ttf
+      </param-value>
+    </init-param>
+    -->
   </filter>
 
   <!-- SNIP -->
@@ -94,7 +107,19 @@
           <tr>
             <th>Init Parameter Name</th>
             <th>Description</th>
+            <th>Example Value(s)</th>
             <th>Default Value</th>
+          </tr>
+          <tr>
+            <td>tidy.props</td>
+            <td>
+              Context relative JTidy configuration properties resource path.
+            </td>
+            <td>
+              <a href="http://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo/trunk/site/src/main/webapp/WEB-INF/tidy.properties" target="_blank">/WEB-INF/tidy.properties</a>
+            </td>
+            <td>
+            </td>
           </tr>
           <tr>
             <td>css.uris</td>
@@ -105,15 +130,20 @@
               or file: URI or relative path from the current working directory.
             </td>
             <td>
+              /WEB-INF/default-pdf-renderer.css
+            </td>
+            <td>
             </td>
           </tr>
           <tr>
             <td>font.paths</td>
             <td>
-              Font file resource paths used when embedding fonts into PDF output.
-              You can specify multiple CSS file resources by separating comma, semicolon, tab or line break.
-              Each CSS file resource can be either context relative path (e.g., /WEB-INF/fonts/arial.ttf)
-              or file: URI or relative path from the current working directory.
+              Font file paths used when embedding fonts into PDF output.
+              You can specify multiple Font file paths by separating comma, semicolon, tab or line break.
+              Each font file must be absolute file path (e.g., /home/tester/fonts/courier.ttf).
+            </td>
+            <td>
+              /home/tester/fonts/courier.ttf
             </td>
             <td>
             </td>
@@ -126,6 +156,9 @@
             <td>
               4096
             </td>
+            <td>
+              4096
+            </td>
           </tr>
           <tr>
             <td>user.agent.callback.class</td>
@@ -133,6 +166,8 @@
               The name of a custom class which implements org.xhtmlrenderer.extend.UserAgentCallback.
               If you want to customize the internal callback mechanism for Flying Saucer for some reason
               (e.g., custom image loading), then you can provide the class name of your custom class.
+            </td>
+            <td>
             </td>
             <td>
             </td>
