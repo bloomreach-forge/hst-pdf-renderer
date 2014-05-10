@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -38,7 +39,11 @@ public class TestHtmlPDFRenderer {
 
     @Before
     public void setUp() throws Exception {
-        pdfRenderer = new HtmlPDFRenderer();
+        Properties tidyProps = new Properties();
+        InputStream input = getClass().getResourceAsStream("tidy.properties");
+        tidyProps.load(input);
+        input.close();
+        pdfRenderer = new HtmlPDFRenderer(tidyProps);
         File cssFile = FileUtils.toFile(getClass().getResource("default-pdf-renderer.css"));
         pdfRenderer.setCssURIs(new URI [] { cssFile.toURI() });
     }

@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -55,6 +56,7 @@ import org.xhtmlrenderer.extend.UserAgentCallback;
  */
 public class HtmlPDFRenderingFilter implements Filter {
 
+    public static final String TIDY_PROPS_PARAM = "tidy.props";
     public static final String CSS_URI_PARAM = "css.uris";
     public static final String BUFFER_SIZE_PARAM = "buffer.size";
     public static final String USER_AGENT_CALLBACK_CLASS_PARAM = "user.agent.callback.class";
@@ -66,9 +68,24 @@ public class HtmlPDFRenderingFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        pdfRenderer = new HtmlPDFRenderer();
+        Properties tidyProps = new Properties();
+        String param = StringUtils.trim(filterConfig.getInitParameter(TIDY_PROPS_PARAM));
 
-        String param = StringUtils.trim(filterConfig.getInitParameter(CSS_URI_PARAM));
+        if (!StringUtils.isEmpty(param)) {
+            InputStream input = null;
+            try {
+                input = filterConfig.getServletContext().getResourceAsStream(param);
+                tidyProps.load(input);
+            } catch (Exception e) {
+                log.error("Failed to parse Tidy properties from '" + param + "'.", e);
+            } finally {
+                IOUtils.closeQuietly(input);
+            }
+        }
+
+        pdfRenderer = new HtmlPDFRenderer(tidyProps);
+
+        param = StringUtils.trim(filterConfig.getInitParameter(CSS_URI_PARAM));
 
         if (!StringUtils.isEmpty(param)) {
             String [] cssURIParams = StringUtils.split(param, ";, \t\r\n");
@@ -127,7 +144,6 @@ public class HtmlPDFRenderingFilter implements Filter {
             String [] fontPaths = StringUtils.split(param, ";, \t\r\n");
             pdfRenderer.setFontPaths(fontPaths);
         }
-
     }
 
     @Override
@@ -246,4 +262,5 @@ public class HtmlPDFRenderingFilter implements Filter {
 
         return virtualHost.getBaseURL(request);
     }
+
 }

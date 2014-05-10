@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,6 +49,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.BaseFont;
 
 /**
  * HtmlPDFRenderer
@@ -60,6 +62,7 @@ public class HtmlPDFRenderer {
 
     private static Logger log = LoggerFactory.getLogger(HtmlPDFRenderer.class);
 
+    private final Properties tidyProps;
     private boolean removeExistingCssLinks = true;
     private URI [] cssURIs;
     private int bufferSize = 4096;
@@ -68,6 +71,11 @@ public class HtmlPDFRenderer {
     private boolean useFullyQualifiedLinks = true;
 
     public HtmlPDFRenderer() {
+        this(new Properties());
+    }
+
+    public HtmlPDFRenderer(final Properties tidyProps) {
+        this.tidyProps = tidyProps;
     }
 
     public boolean isRemoveExistingCssLinks() {
@@ -139,7 +147,7 @@ public class HtmlPDFRenderer {
                 ITextFontResolver fontResolver = renderer.getFontResolver();
 
                 for (String fontPath : fontPaths) {
-                    fontResolver.addFont(fontPath, true);
+                    fontResolver.addFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
                 }
             }
 
@@ -181,14 +189,7 @@ public class HtmlPDFRenderer {
 
     private Reader convertHtmlReaderToXhtmlReader(Reader htmlReader) throws IOException {
         Tidy tidy = new Tidy();
-
-        tidy.setMakeClean(true);
-        tidy.setXHTML(true);
-        tidy.setDocType("omit");
-        tidy.setNumEntities(true);
-        tidy.setInputEncoding("UTF-8");
-        tidy.setQuiet(true);
-        tidy.setShowWarnings(false);
+        tidy.setConfigurationFromProps(tidyProps);
 
         ByteArrayOutputStream tidyOut = null;
         OutputStreamWriter osw = null;
