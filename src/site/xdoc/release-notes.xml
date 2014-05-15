@@ -42,7 +42,12 @@
     <section name="Release Notes">
       <subsection name="1.01.00">
         <ul>
-          <li>Externalizing JTidy properties file (Thanks to Eray Konur)</li>
+          <li>
+            Externalizing JTidy properties file in order to allow users to set any JTidy configurations
+            (e.g, adding unknown tags which cannot be tidied by default).
+            <br/>
+            Thanks to Eray Konur!
+          </li>
           <li>Fixing documentation about how to set font files in HtmlPDFRenderingFilter filter configuration in web.xml</li>
           <li>Upgrade the demo project to base itself on Hippo CMS 7.9 (but the module should work on Hippo CMS 7.8, too.)</li>
         </ul>
