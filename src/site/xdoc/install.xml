@@ -115,6 +115,11 @@
             <td>tidy.props</td>
             <td>
               Context relative JTidy configuration properties resource path.
+              <br/>
+              The properties file should contain valid JTidy configurations.
+              <br/>
+              For detail on available JTidy configurations,
+              see <a href="http://tidy.sourceforge.net/docs/quickref.html" target="_blank">http://tidy.sourceforge.net/docs/quickref.html</a>.
             </td>
             <td>
               <a href="http://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo/trunk/site/src/main/webapp/WEB-INF/tidy.properties" target="_blank">/WEB-INF/tidy.properties</a>
