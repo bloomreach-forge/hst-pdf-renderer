@@ -24,7 +24,7 @@
   <description>HST PDF Renderer</description>
   <groupId>org.onehippo.forge.hstpdfrenderer</groupId>
   <artifactId>hstpdfrenderer</artifactId>
-  <version>1.01.00</version>
+  <version>1.01.01-SNAPSHOT</version>
   <packaging>jar</packaging>
   <url>http://hstpdfrenderer.forge.onehippo.org/</url>
 
@@ -94,9 +94,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer/tags/hstpdfrenderer-1.01.00</connection>
-    <developerConnection>scm:svn:https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer/tags/hstpdfrenderer-1.01.00</developerConnection>
-    <url>https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer/tags/hstpdfrenderer-1.01.00</url>
+    <connection>scm:svn:https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer/trunk</connection>
+    <developerConnection>scm:svn:https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer/trunk</developerConnection>
+    <url>https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer/trunk</url>
   </scm>
 
   <issueManagement>
