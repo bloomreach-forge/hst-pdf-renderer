@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.Properties;
 
@@ -190,6 +191,12 @@ public class HtmlPDFRenderer {
     private Reader convertHtmlReaderToXhtmlReader(Reader htmlReader) throws IOException {
         Tidy tidy = new Tidy();
         tidy.setConfigurationFromProps(tidyProps);
+
+        if (log.isDebugEnabled()) {
+            StringWriter writer = new StringWriter();
+            tidy.getConfiguration().printConfigOptions(writer, true);
+            log.debug("Tidy configuration: \n{}", writer.toString());
+        }
 
         ByteArrayOutputStream tidyOut = null;
         OutputStreamWriter osw = null;
