@@ -333,30 +333,6 @@
       </subsection>
 
     </section>
-    <section name="Demo">
-      <p>Check out and build the demo at:
-        <a href="https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo">
-          https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo
-        </a>
-      </p>
-      <p>For example, you can run the demo project as follows:</p>
-      <div class="brush: bash">
-      <source><![CDATA[
-$ svn checkout https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo/tags/hstpdfrenderer-demo-${forge.hstpdfrenderer.version} hstpdfrenderer-demo
-$ cd hstpdfrenderer-demo
-$ mvn clean install
-$ mvn -P cargo.run
-      ]]></source>
-      </div>
-      <p>
-        <em>
-          Note: ${forge.hstpdfrenderer.version} should be replaced by the tagged version.
-          You can find all the tags under https://forge.onehippo.org/svn/hstpdfrenderer/hstpdfrenderer-demo/tags/.
-        </em>
-      </p>
-      <p>
-        Try to click PDF icon button on each detail page in the website, http://localhost:8080/site/.
-      </p>
-    </section>
+
   </body>
 </document>
