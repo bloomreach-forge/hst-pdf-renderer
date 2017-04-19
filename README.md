@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/onehippo-forge/hst-pdf-renderer.svg?branch=develop)](https://travis-ci.org/onehippo-forge/hst-pdf-renderer)
 
 # HST PDF Renderer
 
