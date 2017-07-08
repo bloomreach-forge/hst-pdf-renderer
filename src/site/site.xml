@@ -25,6 +25,15 @@
     <version>1.04.00</version>
   </skin>
 
+  <custom>
+    <hippoSkin>
+      <!-- Add a 'Fork me on GitHub' ribbon  -->
+      <gitHub>
+        <projectId>onehippo-forge/hst-pdf-renderer</projectId>
+      </gitHub>
+    </hippoSkin>
+  </custom>
+
   <body>
 
     <menu name="Overview">

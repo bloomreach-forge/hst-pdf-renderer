@@ -30,12 +30,12 @@
           <th>Hippo CMS Release version</th>
         </tr>
         <tr>
-          <td>1.01.xx</td>
-          <td>7.7.x, 7.8.x, 7.9.x</td>
+          <td>1.x</td>
+          <td>12.x, 11.x, 10.x, 7.9.x, 7.8.x, 7.7.x</td>
         </tr>
         <tr>
-          <td>0.xx.xx</td>
-          <td>7.7.x, 7.8.x</td>
+          <td>0.x</td>
+          <td>7.8.x, 7.7.x</td>
         </tr>
       </table>
     </section>
