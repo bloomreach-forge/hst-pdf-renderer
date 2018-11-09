@@ -120,7 +120,7 @@
     <section name="Running Demo Application">
       <subsection name="Check out demo application">
         <p>
-          Fork me on GitHub: <a href="https://github.com/onehippo-forge/hst-pdf-renderer" target="_blank">https://github.com/onehippo-forge/hst-pdf-renderer</a>.
+          Fork me on GitHub: <a href="https://github.com/bloomreach-forge/hst-pdf-renderer" target="_blank">https://github.com/bloomreach-forge/hst-pdf-renderer</a>.
         </p>
         <p>
           Build the project using Maven:
