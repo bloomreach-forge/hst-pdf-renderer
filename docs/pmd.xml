@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.2.5" timestamp="2017-07-11T13:09:26.855">
-<file name="/Users/woonsanko/workspace/hst-pdf-renderer/src/main/java/org/onehippo/forge/hst/pdf/renderer/HtmlPDFRenderer.java">
+<pmd version="4.2.5" timestamp="2018-11-09T11:43:27.434">
+<file name="/home/machak/projects/plugins/hst-pdf-renderer/src/main/java/org/onehippo/forge/hst/pdf/renderer/HtmlPDFRenderer.java">
 <violation beginline="260" endline="262" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.onehippo.forge.hst.pdf.renderer" class="HtmlPDFRenderer" method="removeExistingCssLinks" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
 </file>
-<file name="/Users/woonsanko/workspace/hst-pdf-renderer/src/main/java/org/onehippo/forge/hst/pdf/renderer/servlet/HtmlPDFRenderingFilter.java">
+<file name="/home/machak/projects/plugins/hst-pdf-renderer/src/main/java/org/onehippo/forge/hst/pdf/renderer/servlet/HtmlPDFRenderingFilter.java">
 <violation beginline="195" endline="197" begincolumn="11" endcolumn="9" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.onehippo.forge.hst.pdf.renderer.servlet" class="HtmlPDFRenderingFilter" method="doFilter" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
