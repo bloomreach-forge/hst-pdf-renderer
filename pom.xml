@@ -26,7 +26,7 @@
   <artifactId>hstpdfrenderer</artifactId>
   <version>1.01.01-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <url>https://onehippo-forge.github.io/hst-pdf-renderer/</url>
+  <url>https://bloomreach-forge.github.io/hst-pdf-renderer/</url>
 
   <properties>
 
@@ -89,9 +89,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git@github.com:onehippo-forge/hst-pdf-renderer.git</connection>
-    <developerConnection>scm:git:git@github.com:onehippo-forge/hst-pdf-renderer.git</developerConnection>
-    <url>https://github.com/onehippo-forge/hst-pdf-renderer.git</url>
+    <connection>scm:git:git@github.com:bloomreach-forge/hst-pdf-renderer.git</connection>
+    <developerConnection>scm:git:git@github.com:bloomreach-forge/hst-pdf-renderer.git</developerConnection>
+    <url>https://github.com/bloomreach-forge/hst-pdf-renderer.git</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -102,7 +102,7 @@
 
   <ciManagement>
     <system>Travis CI</system>
-    <url>https://travis-ci.org/onehippo-forge/hst-pdf-renderer</url>
+    <url>https://travis-ci.org/bloomreach-forge/hst-pdf-renderer</url>
   </ciManagement>
 
   <distributionManagement>
